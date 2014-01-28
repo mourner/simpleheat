@@ -4,7 +4,7 @@
     <title>simpleheat demo</title>
     <style>
         body { text-align: center; font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
-        .container { width: 1000px; margin: 0 auto; position: relative; text-align: left; border: 1px solid #ccc; }
+        .container { width: 1000px; height: 600px; margin: 0 auto; position: relative; border: 1px solid #ccc; }
         .options { position: absolute; top: 0; right: 0; padding: 10px; background: rgba(255,255,255,0.6); }
         .options input { width: 200px; }
         .options label { width: 60px; float: left; text-align: right; margin-right: 10px; }
@@ -13,14 +13,14 @@
 <body>
 <p>
     <strong>simpleheat</strong> is a tiny and fast JS heatmap library.
-    More on GitHub: <a href="https://github.com/mourner/simpleheat">mourner / simpleheat</a>
+    GitHub: <a href="https://github.com/mourner/simpleheat">mourner / simpleheat</a>
 </p>
 <div class="container">
     <div class="options">
         <label>Radius </label><input type="range" id="radius" value="25" min="10" max="50" /><br />
         <label>Blur </label><input type="range" id="blur" value="15" min="10" max="50" />
     </div>
-    <canvas id="canvas" width="1000" height="600"></canvas><br />
+    <canvas id="canvas" width="1000" height="600"></canvas>
 </div>
 
 <script src="../simpleheat.js"></script>
