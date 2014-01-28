@@ -25,21 +25,20 @@ simpleheat.prototype = {
     },
 
     radius: function (r, blur) {
-        this._circle = document.createElement('canvas');
-
         blur = blur || 15;
 
-        var ctx = this._circle.getContext('2d'),
+        var circle = this._circle = document.createElement('canvas'),
+            ctx = circle.getContext('2d'),
             r2 = this._r = r + blur;
 
-        this._circle.width = this._circle.height = r2 * 2;
+        circle.width = circle.height = r2 * 2;
 
-        ctx.shadowOffsetX = ctx.shadowOffsetY = 1000;
+        ctx.shadowOffsetX = ctx.shadowOffsetY = 200;
         ctx.shadowBlur = blur;
         ctx.shadowColor = 'black';
 
         ctx.beginPath();
-        ctx.arc(r2 - 1000, r2 - 1000, r, 0, Math.PI * 2, true);
+        ctx.arc(r2 - 200, r2 - 200, r, 0, Math.PI * 2, true);
         ctx.closePath();
         ctx.fill();
 
@@ -48,12 +47,11 @@ simpleheat.prototype = {
 
     gradient: function (grad) {
         var canvas = document.createElement('canvas'),
-            ctx = canvas.getContext('2d');
+            ctx = canvas.getContext('2d'),
+            gradient = ctx.createLinearGradient(0, 0, 0, 256);
 
         canvas.width = 1;
         canvas.height = 256;
-
-        var gradient = ctx.createLinearGradient(0, 0, 0, 256);
 
         gradient.addColorStop(0, 'rgba(0,0,255,0)');
 
@@ -64,7 +62,7 @@ simpleheat.prototype = {
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 1, 256);
 
-        this._gradient = ctx.getImageData(0, 0, 1, 256).data;
+        this._grad = ctx.getImageData(0, 0, 1, 256).data;
 
         return this;
     },
@@ -86,7 +84,7 @@ simpleheat.prototype = {
         }
 
         var colored = ctx.getImageData(0, 0, this._width, this._height);
-        this._colorize(colored.data, this._gradient);
+        this._colorize(colored.data, this._grad);
         ctx.putImageData(colored, 0, 0);
 
         return this;
