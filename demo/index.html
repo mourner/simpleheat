@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>simpleheat demo</title>
-	<style>
-		body { text-align: center; font: 16px/1.5 "Helvetica Neue", Arial, sans-serif; }
-		#canvas { border: 1px solid #ccc;}
-	</style>
+    <title>simpleheat demo</title>
+    <style>
+        body { text-align: center; font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
+        .container { width: 1000px; margin: 0 auto; position: relative; text-align: left; border: 1px solid #ccc; }
+        .options { position: absolute; top: 0; right: 0; padding: 10px; background: rgba(255,255,255,0.6); }
+        .options input { width: 200px; }
+        .options label { width: 60px; float: left; text-align: right; margin-right: 10px; }
+    </style>
 </head>
 <body>
 <p>
-	<strong>simpleheat</strong> is a tiny and fast JavaScript library for drawing heatmaps with Canvas. <a href="https://github.com/mourner/simpleheat">mourner / simpleheat</a>
+    <strong>simpleheat</strong> is a tiny and fast JS heatmap library.
+    More on GitHub: <a href="https://github.com/mourner/simpleheat">mourner / simpleheat</a>
 </p>
-<canvas id="canvas" width="1000" height="600" style="border: 1px solid #ccc"></canvas>
+<div class="container">
+    <div class="options">
+        <label>Radius </label><input type="range" id="radius" value="25" min="10" max="50" /><br />
+        <label>Blur </label><input type="range" id="blur" value="15" min="10" max="50" />
+    </div>
+    <canvas id="canvas" width="1000" height="600"></canvas><br />
+</div>
 
 <script src="../simpleheat.js"></script>
-<script src="data-865.js"></script>
+<script src="data.js"></script>
 <script>
 
 var heat = simpleheat('canvas').data(data);
@@ -24,9 +34,19 @@ heat.draw();
 console.timeEnd('draw');
 
 document.getElementById('canvas').onmousemove = function (e) {
-	console.time('draw');
-	heat.add([e.layerX, e.layerY, 1]).draw();
-	console.timeEnd('draw');
+    console.time('draw');
+    heat.add([e.layerX, e.layerY, 1]).draw();
+    console.timeEnd('draw');
+};
+
+var radius = document.getElementById('radius'),
+    blur = document.getElementById('blur');
+
+radius['oninput' in radius ? 'oninput' : 'onchange'] =
+blur['oninput' in blur ? 'oninput' : 'onchange'] = function (e) {
+    console.time('draw');
+    heat.radius(+radius.value, +blur.value).draw();
+    console.timeEnd('draw');
 };
 
 </script>
