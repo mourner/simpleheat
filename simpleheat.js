@@ -53,8 +53,6 @@ simpleheat.prototype = {
         canvas.width = 1;
         canvas.height = 256;
 
-        gradient.addColorStop(0, 'rgba(0,0,255,0)');
-
         for (var i in grad) {
             gradient.addColorStop(i, grad[i]);
         }
