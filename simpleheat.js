@@ -15,13 +15,31 @@ function simpleheat(canvas) {
     this._ctx = canvas.getContext('2d');
     this._width = canvas.width;
     this._height = canvas.height;
+
+    this.clear();
 }
 
 simpleheat.prototype = {
 
     data: function (data) {
         this._data = data;
+
+        for (var i = 0, len = data.length; i < len; i++) {
+            this._max = Math.max(this._max, data[i][2]);
+        }
+
         return this;
+    },
+
+    add: function (point) {
+        this._data.push(point);
+        this._max = Math.max(this._max, point[2]);
+        return this;
+    },
+
+    clear: function () {
+        this._data = [];
+        this._max = -Infinity;
     },
 
     radius: function (r, blur) {
@@ -65,7 +83,7 @@ simpleheat.prototype = {
         return this;
     },
 
-    draw: function (max, min) {
+    draw: function (minOpacity) {
         if (!this._circle) {
             this.radius(25).gradient({0.45: 'blue', 0.55: 'cyan', 0.65: 'lime', 0.95: 'yellow', 1: 'red'});
         }
@@ -77,7 +95,7 @@ simpleheat.prototype = {
         for (var i = 0, len = this._data.length, p; i < len; i++) {
             p = this._data[i];
 
-            ctx.globalAlpha = Math.max(p[2], min || max * 0.05) / (max || 1);
+            ctx.globalAlpha = Math.max(p[2] / this._max, minOpacity || 0.05);
             ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
         }
 
