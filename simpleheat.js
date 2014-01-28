@@ -74,43 +74,40 @@ simpleheat.prototype = {
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 1, 256);
 
-        this._palette = ctx.getImageData(0, 0, 1, 256).data;
+        this._gradient = ctx.getImageData(0, 0, 1, 256).data;
 
         return this;
     },
 
     draw: function () {
-        this._ctx.clearRect(0, 0, this._width, this._height);
+        var ctx = this._ctx;
+
+        ctx.clearRect(0, 0, this._width, this._height);
 
         for (var i = 0, len = this._data.length, p; i < len; i++) {
             p = this._data[i];
 
-            this._ctx.globalAlpha = p[2] ? p[2] / this._max : 0.1;
-            this._ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
+            ctx.globalAlpha = p[2] ? p[2] / this._max : 0.1;
+            ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
         }
 
-        this._colorize();
+        var colored = ctx.getImageData(0, 0, this._width, this._height);
+        this._colorize(colored.data, this._gradient);
+        ctx.putImageData(colored, 0, 0);
 
         return this;
     },
 
-    _colorize: function () {
-        var imageData = this._ctx.getImageData(0, 0, this._width, this._height),
-            pixels = imageData.data,
-            palette = this._palette;
-
+    _colorize: function (pixels, gradient) {
         for (var i = 3, len = pixels.length, j; i < len; i += 4) {
             j = pixels[i] * 4;
 
             if (j) {
-                pixels[i - 3] = palette[j];
-                pixels[i - 2] = palette[j + 1];
-                pixels[i - 1] = palette[j + 2];
+                pixels[i - 3] = gradient[j];
+                pixels[i - 2] = gradient[j + 1];
+                pixels[i - 1] = gradient[j + 2];
             }
         }
-
-        imageData.data = pixels;
-        this._ctx.putImageData(imageData, 0, 0);
     }
 };
 
