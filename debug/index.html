@@ -10,12 +10,12 @@
 <script src="data-865.js"></script>
 <script>
 
-var heat = simpleheat('canvas').data(data, 18);
+var heat = simpleheat('canvas').data(data);
 
 var msg = 'draw ' + data.length + ' points';
 console.time(msg);
 
-heat.draw();
+heat.draw(18);
 
 console.timeEnd(msg);
 
