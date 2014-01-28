@@ -21,7 +21,7 @@ simpleheat.prototype = {
 
     data: function (data, max) {
         this._data = data;
-        this._max = max;
+        this._max = max || 1;
         return this;
     },
 
@@ -68,7 +68,7 @@ simpleheat.prototype = {
         return this;
     },
 
-    draw: function () {
+    draw: function (min) {
         if (!this._circle) {
             this.radius(25).gradient({
                 0.00: 'rgba(0,0,255,0)',
@@ -87,7 +87,7 @@ simpleheat.prototype = {
         for (var i = 0, len = this._data.length, p; i < len; i++) {
             p = this._data[i];
 
-            ctx.globalAlpha = p[2] ? p[2] / this._max : 0.1;
+            ctx.globalAlpha = Math.max(p[2] / this._max, min || 0.05);
             ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
         }
 
