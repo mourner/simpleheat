@@ -2,9 +2,16 @@
 <html>
 <head>
 	<title>simpleheat demo</title>
+	<style>
+		body { text-align: center; font: 16px/1.5 "Helvetica Neue", Arial, sans-serif; }
+		#canvas { border: 1px solid #ccc;}
+	</style>
 </head>
 <body>
-<canvas id="canvas" width="1000" height="600"></canvas>
+<p>
+	<strong>simpleheat</strong> is a tiny and fast JavaScript library for drawing heatmaps with Canvas. <a href="https://github.com/mourner/simpleheat">mourner / simpleheat</a>
+</p>
+<canvas id="canvas" width="1000" height="600" style="border: 1px solid #ccc"></canvas>
 
 <script src="../simpleheat.js"></script>
 <script src="data-865.js"></script>
@@ -12,12 +19,15 @@
 
 var heat = simpleheat('canvas').data(data);
 
-var msg = 'draw ' + data.length + ' points';
-console.time(msg);
-
+console.time('draw');
 heat.draw();
+console.timeEnd('draw');
 
-console.timeEnd(msg);
+document.getElementById('canvas').onmousemove = function (e) {
+	console.time('draw');
+	heat.add([e.layerX, e.layerY, 1]).draw();
+	console.timeEnd('draw');
+};
 
 </script>
 </body>
