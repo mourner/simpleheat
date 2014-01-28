@@ -55,6 +55,8 @@ simpleheat.prototype = {
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 256);
 
+        gradient.addColorStop(0, 'rgba(0,0,255,0)');
+
         for (var i in grad) {
             gradient.addColorStop(i, grad[i]);
         }
@@ -69,14 +71,7 @@ simpleheat.prototype = {
 
     draw: function (max, min) {
         if (!this._circle) {
-            this.radius(25).gradient({
-                0.00: 'rgba(0,0,255,0)',
-                0.45: 'rgb(0,0,255)',
-                0.55: 'rgb(0,255,255)',
-                0.65: 'rgb(0,255,0)',
-                0.95: 'yellow',
-                1.00: 'rgb(255,0,0)'
-            });
+            this.radius(25).gradient({0.45: 'blue', 0.55: 'cyan', 0.65: 'lime', 0.95: 'yellow', 1: 'red'});
         }
 
         var ctx = this._ctx;
