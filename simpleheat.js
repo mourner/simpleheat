@@ -6,7 +6,7 @@
 
 (function () { 'use strict';
 
-function simpleheat(canvas, radius, gradient) {
+function simpleheat(canvas) {
     // jshint newcap: false, validthis: true
     if (!(this instanceof simpleheat)) { return new simpleheat(canvas); }
 
@@ -15,17 +15,6 @@ function simpleheat(canvas, radius, gradient) {
     this._ctx = canvas.getContext('2d');
     this._width = canvas.width;
     this._height = canvas.height;
-
-    this.radius(radius || 25);
-
-    this.gradient(gradient || {
-        0.00: 'rgba(0,0,255,0)',
-        0.45: 'rgb(0,0,255)',
-        0.55: 'rgb(0,255,255)',
-        0.65: 'rgb(0,255,0)',
-        0.95: 'yellow',
-        1.00: 'rgb(255,0,0)'
-    });
 }
 
 simpleheat.prototype = {
@@ -80,6 +69,17 @@ simpleheat.prototype = {
     },
 
     draw: function () {
+        if (!this._circle) {
+            this.radius(25).gradient({
+                0.00: 'rgba(0,0,255,0)',
+                0.45: 'rgb(0,0,255)',
+                0.55: 'rgb(0,255,255)',
+                0.65: 'rgb(0,255,0)',
+                0.95: 'yellow',
+                1.00: 'rgb(255,0,0)'
+            });
+        }
+
         var ctx = this._ctx;
 
         ctx.clearRect(0, 0, this._width, this._height);
