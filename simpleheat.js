@@ -85,7 +85,7 @@ simpleheat.prototype = {
 
     draw: function (minOpacity) {
         if (!this._circle) {
-            this.radius(25).gradient({0.45: 'blue', 0.55: 'cyan', 0.65: 'lime', 0.95: 'yellow', 1: 'red'});
+            this.radius(25).gradient({0.45: 'blue', 0.55: 'cyan', 0.65: 'lime', 0.9: 'yellow', 1: 'red'});
         }
 
         var ctx = this._ctx;
