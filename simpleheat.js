@@ -77,7 +77,6 @@ simpleheat.prototype = {
 	},
 
 	draw: function () {
-		console.time('draw');
 		this._ctx.clearRect(0, 0, this._width, this._height);
 
 		for (var i = 0, len = this._data.length, p; i < len; i++) {
@@ -88,7 +87,6 @@ simpleheat.prototype = {
 		}
 
 		this._colorize();
-		console.timeEnd('draw');
 
 		return this;
 	},
