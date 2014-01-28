@@ -4,7 +4,10 @@
  https://github.com/mourner/simpleheat
 */
 
+(function () { 'use strict';
+
 function simpleheat(canvas, radius, gradient) {
+    // jshint newcap: false, validthis: true
     if (!(this instanceof simpleheat)) { return new simpleheat(canvas); }
 
     this._canvas = canvas = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
@@ -23,7 +26,7 @@ function simpleheat(canvas, radius, gradient) {
         0.95: 'yellow',
         1.00: 'rgb(255,0,0)'
     });
-};
+}
 
 simpleheat.prototype = {
 
@@ -110,3 +113,7 @@ simpleheat.prototype = {
         this._ctx.putImageData(imageData, 0, 0);
     }
 };
+
+window.simpleheat = simpleheat;
+
+})();
