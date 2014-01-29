@@ -11,10 +11,13 @@ function simpleheat(canvas) {
     if (!(this instanceof simpleheat)) { return new simpleheat(canvas); }
 
     this._canvas = canvas = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
-
     this._ctx = canvas.getContext('2d');
-    this._width = canvas.width;
-    this._height = canvas.height;
+
+    var shadow = this._shadow = document.createElement('canvas');
+    this._shadowCtx = shadow.getContext('2d');
+
+    this._width = shadow.width = canvas.width;
+    this._height = shadow.height = canvas.height;
 
     this._max = 1;
     this.clear();
@@ -25,23 +28,28 @@ simpleheat.prototype = {
     defaultRadius: 25,
     defaultGradient: {0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1: 'red'},
 
-    data: function (data, max) {
-        this._data = data;
+    data: function (data) {
+        this._toAdd = data;
         return this;
     },
 
     max: function (max) {
         this._max = max;
+        this._redraw();
         return this;
     },
 
     add: function (point) {
-        this._data.push(point);
+        this._toAdd.push(point);
         return this;
     },
 
     clear: function () {
-        this._data = [];
+        if (this._added && this._added.length) {
+            this._clear = true;
+        }
+        this._added = [];
+        this._toAdd = [];
         return this;
     },
 
@@ -63,6 +71,8 @@ simpleheat.prototype = {
         ctx.closePath();
         ctx.fill();
 
+        this._redraw();
+
         return this;
     },
 
@@ -83,6 +93,8 @@ simpleheat.prototype = {
 
         this._grad = ctx.getImageData(0, 0, 1, 256).data;
 
+        this._redraw();
+
         return this;
     },
 
@@ -94,22 +106,48 @@ simpleheat.prototype = {
             this.gradient(this.defaultGradient);
         }
 
-        var ctx = this._ctx;
+        var ctx = this._shadowCtx;
 
-        ctx.clearRect(0, 0, this._width, this._height);
-
-        for (var i = 0, len = this._data.length, p; i < len; i++) {
-            p = this._data[i];
-
-            ctx.globalAlpha = Math.max(p[2] / this._max, minOpacity || 0.05);
-            ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
+        if (this._clear) {
+            ctx.clearRect(0, 0, this._width, this._height);
+            this._ctx.clearRect(0, 0, this._width, this._height);
+            this._clear = false;
         }
 
-        var colored = ctx.getImageData(0, 0, this._width, this._height);
+        var minX = this._width,
+            minY = this._height,
+            maxX = 0,
+            maxY = 0,
+            r = this._r;
+
+        for (var i = 0, len = this._toAdd.length, p; i < len; i++) {
+            p = this._toAdd[i];
+
+            ctx.globalAlpha = Math.max(Math.abs(p[2]) / this._max, minOpacity || 0.05);
+            ctx.globalCompositeOperation = p[2] > 0 ? 'source-over' : 'destination-out';
+            ctx.drawImage(this._circle, p[0] - r, p[1] - r);
+
+            minX = Math.min(minX, p[0] - r);
+            maxX = Math.max(maxX, p[0] + r);
+            minY = Math.min(minY, p[1] - r);
+            maxY = Math.max(maxY, p[1] + r);
+        }
+
+        var colored = ctx.getImageData(minX, minY, maxX - minX, maxY - minY);
         this._colorize(colored.data, this._grad);
-        ctx.putImageData(colored, 0, 0);
+        this._ctx.putImageData(colored, minX, minY);
+
+        this._added = this._added.concat(this._toAdd);
+        this._toAdd = [];
 
         return this;
+    },
+
+    _redraw: function () {
+        var added = this._added;
+        this._added = [];
+        this._toAdd = this._toAdd.concat(added);
+        this._clear = true;
     },
 
     _colorize: function (pixels, gradient) {
