@@ -16,32 +16,33 @@ function simpleheat(canvas) {
     this._width = canvas.width;
     this._height = canvas.height;
 
+    this._max = 1;
     this.clear();
 }
 
 simpleheat.prototype = {
 
-    data: function (data) {
-        this._data = data;
-
-        for (var i = 0, len = data.length; i < len; i++) {
-            this._max = Math.max(this._max, data[i][2]);
-        }
     defaultRadius: 25,
     defaultGradient: {0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1: 'red'},
 
+    data: function (data, max) {
+        this._data = data;
+        return this;
+    },
+
+    max: function (max) {
+        this._max = max;
         return this;
     },
 
     add: function (point) {
         this._data.push(point);
-        this._max = Math.max(this._max, point[2]);
         return this;
     },
 
     clear: function () {
         this._data = [];
-        this._max = -Infinity;
+        return this;
     },
 
     radius: function (r, blur) {

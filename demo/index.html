@@ -32,7 +32,7 @@
 <script src="data.js"></script>
 <script>
 
-var heat = simpleheat('canvas').data(data);
+var heat = simpleheat('canvas').data(data).max(18);
 
 console.time('draw');
 heat.draw();

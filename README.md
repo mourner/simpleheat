@@ -25,6 +25,9 @@ var heat = simpleheat(canvas);
 // set data of [[x, y, value], ...] format
 heat.data(data);
 
+// set max data value (1 by default)
+heat.max(max);
+
 // add a data point
 heat.add(point);
 
