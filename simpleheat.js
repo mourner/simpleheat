@@ -27,6 +27,8 @@ simpleheat.prototype = {
         for (var i = 0, len = data.length; i < len; i++) {
             this._max = Math.max(this._max, data[i][2]);
         }
+    defaultRadius: 25,
+    defaultGradient: {0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1: 'red'},
 
         return this;
     },
@@ -85,10 +87,10 @@ simpleheat.prototype = {
 
     draw: function (minOpacity) {
         if (!this._circle) {
-            this.radius(25);
+            this.radius(this.defaultRadius);
         }
         if (!this._grad) {
-            this.gradient({0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1: 'red'});
+            this.gradient(this.defaultGradient);
         }
 
         var ctx = this._ctx;
