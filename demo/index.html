@@ -32,26 +32,37 @@
 <script src="data.js"></script>
 <script>
 
-var heat = simpleheat('canvas').data(data).max(18);
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                               window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
-console.time('draw');
-heat.draw();
-console.timeEnd('draw');
+function get(id) {
+    return document.getElementById(id);
+}
 
-document.getElementById('canvas').onmousemove = function (e) {
+var heat = simpleheat('canvas').data(data).max(18),
+    frame;
+
+function draw() {
     console.time('draw');
-    heat.add([e.layerX, e.layerY, 1]).draw();
+    heat.draw();
     console.timeEnd('draw');
+    frame = null;
+}
+
+draw();
+
+get('canvas').onmousemove = function (e) {
+    heat.add([e.layerX, e.layerY, 1]);
+    frame = frame || window.requestAnimationFrame(draw);
 };
 
-var radius = document.getElementById('radius'),
-    blur = document.getElementById('blur');
+var radius = get('radius'),
+    blur = get('blur'),
+    changeType = 'oninput' in radius ? 'oninput' : 'onchange';
 
-radius['oninput' in radius ? 'oninput' : 'onchange'] =
-blur['oninput' in blur ? 'oninput' : 'onchange'] = function (e) {
-    console.time('draw');
-    heat.radius(+radius.value, +blur.value).draw();
-    console.timeEnd('draw');
+radius[changeType] = blur[changeType] = function (e) {
+    heat.radius(+radius.value, +blur.value);
+    frame = frame || window.requestAnimationFrame(draw);
 };
 
 </script>
