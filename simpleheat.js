@@ -17,13 +17,20 @@ function simpleheat(canvas) {
     this._height = canvas.height;
 
     this._max = 1;
-    this.clear();
+    this._data = [];
 }
 
 simpleheat.prototype = {
 
     defaultRadius: 25,
-    defaultGradient: {0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1: 'red'},
+
+    defaultGradient: {
+        0.4: 'blue',
+        0.6: 'cyan',
+        0.7: 'lime',
+        0.8: 'yellow',
+        1.0: 'red'
+    },
 
     data: function (data) {
         this._data = data;
@@ -118,7 +125,7 @@ simpleheat.prototype = {
 
     _colorize: function (pixels, gradient) {
         for (var i = 3, len = pixels.length, j; i < len; i += 4) {
-            j = pixels[i] * 4;
+            j = pixels[i] * 4; // get gradient color from opacity value
 
             if (j) {
                 pixels[i - 3] = gradient[j];
