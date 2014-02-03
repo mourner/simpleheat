@@ -48,6 +48,7 @@ simpleheat.prototype = {
     radius: function (r, blur) {
         blur = blur || 15;
 
+        // create a grayscale blurred circle image that we'll use for drawing points
         var circle = this._circle = document.createElement('canvas'),
             ctx = circle.getContext('2d'),
             r2 = this._r = r + blur;
@@ -67,6 +68,7 @@ simpleheat.prototype = {
     },
 
     gradient: function (grad) {
+        // create a 256x1 gradient that we'll use to turn a grayscale heatmap into a colored one
         var canvas = document.createElement('canvas'),
             ctx = canvas.getContext('2d'),
             gradient = ctx.createLinearGradient(0, 0, 0, 256);
@@ -98,6 +100,7 @@ simpleheat.prototype = {
 
         ctx.clearRect(0, 0, this._width, this._height);
 
+        // draw a grayscale heatmap by putting a blurred circle at each data point
         for (var i = 0, len = this._data.length, p; i < len; i++) {
             p = this._data[i];
 
@@ -105,6 +108,7 @@ simpleheat.prototype = {
             ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
         }
 
+        // colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
         var colored = ctx.getImageData(0, 0, this._width, this._height);
         this._colorize(colored.data, this._grad);
         ctx.putImageData(colored, 0, 0);
