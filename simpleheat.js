@@ -69,6 +69,11 @@ simpleheat.prototype = {
         return this;
     },
 
+    resize: function () {
+        this._width = this._canvas.width;
+        this._height = this._canvas.height;
+    },
+
     gradient: function (grad) {
         // create a 256x1 gradient that we'll use to turn a grayscale heatmap into a colored one
         var canvas = document.createElement('canvas'),

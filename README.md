@@ -45,6 +45,9 @@ heat.radius(r, r2);
 
 // set gradient colors as {<stop>: '<color>'}, e.g. {0.4: 'blue', 0.65: 'lime', 1: 'red'}
 heat.gradient(grad);
+
+// call in case Canvas size changed
+heat.resize();
 ```
 
 #### Rendering
