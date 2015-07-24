@@ -16,6 +16,11 @@ function simpleheat(canvas) {
     this._width = canvas.width;
     this._height = canvas.height;
 
+    this._bufferedCanvas = document.createElement('canvas');
+    this._bufferedCanvas.width = canvas.width;
+    this._bufferedCanvas.height = canvas.height;
+    this._bufferedCtx = this._bufferedCanvas.getContext('2d');
+
     this._max = 1;
     this._data = [];
 }
@@ -103,20 +108,20 @@ simpleheat.prototype = {
             this.gradient(this.defaultGradient);
         }
 
-        var ctx = this._ctx;
+        var ctx = this._ctx, bufferedCtx = this._bufferedCtx;
 
-        ctx.clearRect(0, 0, this._width, this._height);
+        bufferedCtx.clearRect(0, 0, this._width, this._height);
 
         // draw a grayscale heatmap by putting a blurred circle at each data point
         for (var i = 0, len = this._data.length, p; i < len; i++) {
             p = this._data[i];
 
-            ctx.globalAlpha = Math.max(p[2] / this._max, minOpacity === undefined ? 0.05 : minOpacity);
-            ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
+            bufferedCtx.globalAlpha = Math.max(p[2] / this._max, minOpacity === undefined ? 0.05 : minOpacity);
+            bufferedCtx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
         }
 
         // colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
-        var colored = ctx.getImageData(0, 0, this._width, this._height);
+        var colored = bufferedCtx.getImageData(0, 0, this._width, this._height);
         this._colorize(colored.data, this._grad);
         ctx.putImageData(colored, 0, 0);
 
