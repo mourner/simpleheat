@@ -2,6 +2,10 @@
  (c) 2014, Vladimir Agafonkin
  simpleheat, a tiny JavaScript library for drawing heatmaps with Canvas
  https://github.com/mourner/simpleheat
+ 
+ Additions (c) 2015, Dan Jackson
+ Added changes so that only additional data points need to be added to the canvas, and even then only the "dirty rectangle" is re-colorized.
+ Some changes (e.g. radius/blur) will trigger a full redraw.
 */
 
 (function () { 'use strict';
@@ -22,6 +26,8 @@ function simpleheat(canvas) {
 
 simpleheat.prototype = {
 
+	_redraw: true,
+	
     defaultRadius: 25,
 
     defaultGradient: {
@@ -34,10 +40,12 @@ simpleheat.prototype = {
 
     data: function (data) {
         this._data = data;
+		this._redraw = true;
         return this;
     },
 
     max: function (max) {
+		if (this._max != max) { this._redraw = true; }
         this._max = max;
         return this;
     },
@@ -49,12 +57,17 @@ simpleheat.prototype = {
 
     clear: function () {
         this._data = [];
+		this._redraw = true;
         return this;
     },
 
     radius: function (r, blur) {
         blur = blur === undefined ? 15 : blur;
 
+		if (this._r != r + blur) {
+			this._redraw = true;
+		}
+		
         // create a grayscale blurred circle image that we'll use for drawing points
         var circle = this._circle = document.createElement('canvas'),
             ctx = circle.getContext('2d'),
@@ -92,6 +105,8 @@ simpleheat.prototype = {
 
         this._grad = ctx.getImageData(0, 0, 1, 256).data;
 
+		this._redraw = true;
+		
         return this;
     },
 
@@ -104,22 +119,49 @@ simpleheat.prototype = {
         }
 
         var ctx = this._ctx;
+		if (this._width != this._canvas.width || this._height != this._canvas.height) {
+			this._width = this._canvas.width;
+			this._height = this._canvas.height;
+			this._redraw = true;
+		}
 
-        ctx.clearRect(0, 0, this._width, this._height);
+		var dirty = false, minX = null, minY = null, maxX = null, maxY = null;
+		if (this._redraw) {
+			ctx.clearRect(0, 0, this._width, this._height);
+			this._redraw = false;
+			this._alreadyDrawn = 0;
+			dirty = true; minX = 0; minY = 0; maxX = this._width; maxY = this._height;
+		}
 
         // draw a grayscale heatmap by putting a blurred circle at each data point
-        for (var i = 0, len = this._data.length, p; i < len; i++) {
+        for (var i = this._alreadyDrawn, len = this._data.length, p; i < len; i++) {
             p = this._data[i];
-
             ctx.globalAlpha = Math.max(p[2] / this._max, minOpacity === undefined ? 0.05 : minOpacity);
             ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
+			if (!dirty || p[0] - this._r < minX) { minX = p[0] - this._r; }
+			if (!dirty || p[0] + this._r > maxX) { maxX = p[0] + this._r; }
+			if (!dirty || p[1] - this._r < minY) { minY = p[1] - this._r; }
+			if (!dirty || p[1] + this._r > maxY) { maxY = p[1] + this._r; }
+			dirty = true;
         }
+		
+		this._alreadyDrawn = this._data.length;
 
-        // colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
-        var colored = ctx.getImageData(0, 0, this._width, this._height);
-        this._colorize(colored.data, this._grad);
-        ctx.putImageData(colored, 0, 0);
-
+		if (dirty)
+		{
+			if (maxX < minX) { maxX = minX; }
+			if (maxY < minY) { maxY = minY; }
+			if (minX < 0) { minX = 0; }
+			if (maxX > this._width) { maxX = this._width; }
+			if (minY < 0) { minY = 0; }
+			if (maxY > this._height) { maxY = this._height; }
+			
+			// colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
+			var colored = ctx.getImageData(minX, minY, maxX - minX + 1, maxY - minY + 1);
+			this._colorize(colored.data, this._grad);
+			ctx.putImageData(colored, minX, minY);
+		}
+		
         return this;
     },
 
