@@ -62,12 +62,12 @@ simpleheat.prototype = {
 
         circle.width = circle.height = r2 * 2;
 
-        ctx.shadowOffsetX = ctx.shadowOffsetY = 200;
+        ctx.shadowOffsetX = ctx.shadowOffsetY = r2 * 2;
         ctx.shadowBlur = blur;
         ctx.shadowColor = 'black';
 
         ctx.beginPath();
-        ctx.arc(r2 - 200, r2 - 200, r, 0, Math.PI * 2, true);
+        ctx.arc(-r2, -r2, r, 0, Math.PI * 2, true);
         ctx.closePath();
         ctx.fill();
 
