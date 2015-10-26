@@ -15,23 +15,17 @@
   },
   "main": "simpleheat.js",
   "scripts": {
-    "test": "jshint simpleheat.js"
+    "test": "eslint simpleheat.js"
   },
   "devDependencies": {
-    "jshint": "~2.4.3"
+    "eslint": "^1.7.3",
+    "eslint-config-mourner": "^1.0.1"
   },
-  "jshintConfig": {
-    "quotmark": "single",
-    "strict": true,
-    "trailing": true,
-    "camelcase": true,
-    "curly": true,
-    "eqeqeq": true,
-    "noempty": true,
-    "nonbsp": true,
-    "undef": true,
-    "unused": true,
-    "browser": true,
-    "trailing": true
-  }
+  "eslintConfig": {
+    "extends": "mourner",
+    "rules": {
+      "new-cap": 0
+    }
+  },
+  "license": "BSD-2-Clause"
 }
