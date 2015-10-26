@@ -1,14 +1,9 @@
-/*
- (c) 2014, Vladimir Agafonkin
- simpleheat, a tiny JavaScript library for drawing heatmaps with Canvas
- https://github.com/mourner/simpleheat
-*/
+'use strict';
 
-(function () { 'use strict';
+if (typeof module !== 'undefined') module.exports = simpleheat;
 
 function simpleheat(canvas) {
-    // jshint newcap: false, validthis: true
-    if (!(this instanceof simpleheat)) { return new simpleheat(canvas); }
+    if (!(this instanceof simpleheat)) return new simpleheat(canvas);
 
     this._canvas = canvas = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
 
@@ -135,7 +130,3 @@ simpleheat.prototype = {
         }
     }
 };
-
-window.simpleheat = simpleheat;
-
-})();
