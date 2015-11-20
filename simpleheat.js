@@ -51,11 +51,10 @@ simpleheat.prototype = {
         blur = blur === undefined ? 15 : blur;
 
         // create a grayscale blurred circle image that we'll use for drawing points
-        var circle = this._circle = document.createElement('canvas'),
-            ctx = circle.getContext('2d'),
-            r2 = this._r = r + blur;
-
-        circle.width = circle.height = r2 * 2;
+        var r2 = this._r = r + blur,
+            size = r2 * 2,
+            circle = this._circle = this._createCanvas(size, size),
+            ctx = circle.getContext('2d');
 
         ctx.shadowOffsetX = ctx.shadowOffsetY = r2 * 2;
         ctx.shadowBlur = blur;
@@ -76,12 +75,9 @@ simpleheat.prototype = {
 
     gradient: function (grad) {
         // create a 256x1 gradient that we'll use to turn a grayscale heatmap into a colored one
-        var canvas = document.createElement('canvas'),
+        var canvas = this._createCanvas(1, 256)
             ctx = canvas.getContext('2d'),
             gradient = ctx.createLinearGradient(0, 0, 0, 256);
-
-        canvas.width = 1;
-        canvas.height = 256;
 
         for (var i in grad) {
             gradient.addColorStop(i, grad[i]);
@@ -128,5 +124,18 @@ simpleheat.prototype = {
                 pixels[i + 2] = gradient[j + 2];
             }
         }
+    },
+
+    _createCanvas: function(width, height) {
+        // No document to use
+        if (typeof document === 'undefined') {
+            return new require('canvas')(width, height);
+        }
+
+        var canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+
+        return canvas;
     }
 };
