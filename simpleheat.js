@@ -80,7 +80,7 @@ simpleheat.prototype = {
             gradient = ctx.createLinearGradient(0, 0, 0, 256);
 
         for (var i in grad) {
-            gradient.addColorStop(i, grad[i]);
+            gradient.addColorStop(parseFloat(i), grad[i]);
         }
 
         ctx.fillStyle = gradient;
