@@ -129,7 +129,8 @@ simpleheat.prototype = {
     _createCanvas: function(width, height) {
         // No document to use
         if (typeof document === 'undefined') {
-            return new require('canvas')(width, height);
+            var canvas = require('canvas')
+            return new canvas(width, height);
         }
 
         var canvas = document.createElement('canvas');
