@@ -5,7 +5,7 @@ if (typeof module !== 'undefined') module.exports = simpleheat;
 function simpleheat(canvas) {
     if (!(this instanceof simpleheat)) return new simpleheat(canvas);
 
-    this._canvas = canvas = ( typeof canvas === 'string' && typeof document !== 'undefined' ) ? document.getElementById(canvas) : canvas;
+    this._canvas = canvas = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
 
     this._ctx = canvas.getContext('2d');
     this._width = canvas.width;
@@ -84,7 +84,7 @@ simpleheat.prototype = {
         canvas.height = 256;
 
         for (var i in grad) {
-            gradient.addColorStop(parseFloat(i), grad[i]);
+            gradient.addColorStop(+i, grad[i]);
         }
 
         ctx.fillStyle = gradient;
@@ -129,14 +129,14 @@ simpleheat.prototype = {
             }
         }
     },
-    
+
     _createCanvas:function() {
         if (typeof document !== 'undefined') {
             return document.createElement('canvas');
         } else {
-            //works for node-canvas, but others?
-            //any better implementations?
-            return new this._canvas.constructor(1, 1);
+            // create a new canvas instance in node.js
+            // the canvas class needs to have a default constructor without any parameter
+            return new this._canvas.constructor();
         }
     }
 };
