@@ -51,7 +51,7 @@ simpleheat.prototype = {
         blur = blur === undefined ? 15 : blur;
 
         // create a grayscale blurred circle image that we'll use for drawing points
-        var circle = this._circle = document.createElement('canvas'),
+        var circle = this._circle = this._createCanvas(),
             ctx = circle.getContext('2d'),
             r2 = this._r = r + blur;
 
@@ -76,7 +76,7 @@ simpleheat.prototype = {
 
     gradient: function (grad) {
         // create a 256x1 gradient that we'll use to turn a grayscale heatmap into a colored one
-        var canvas = document.createElement('canvas'),
+        var canvas = this._createCanvas(),
             ctx = canvas.getContext('2d'),
             gradient = ctx.createLinearGradient(0, 0, 0, 256);
 
@@ -84,7 +84,7 @@ simpleheat.prototype = {
         canvas.height = 256;
 
         for (var i in grad) {
-            gradient.addColorStop(i, grad[i]);
+            gradient.addColorStop(+i, grad[i]);
         }
 
         ctx.fillStyle = gradient;
@@ -127,6 +127,16 @@ simpleheat.prototype = {
                 pixels[i + 1] = gradient[j + 1];
                 pixels[i + 2] = gradient[j + 2];
             }
+        }
+    },
+
+    _createCanvas:function() {
+        if (typeof document !== 'undefined') {
+            return document.createElement('canvas');
+        } else {
+            // create a new canvas instance in node.js
+            // the canvas class needs to have a default constructor without any parameter
+            return new this._canvas.constructor();
         }
     }
 };
