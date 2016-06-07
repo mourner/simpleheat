@@ -96,24 +96,27 @@ simpleheat.prototype = {
     },
 
     draw: function (minOpacity) {
-        if (!this._circle) this.radius(this.defaultRadius);
-        if (!this._grad) this.gradient(this.defaultGradient);
-
-        var ctx = this._ctx;
-
-        ctx.clearRect(0, 0, this._width, this._height);
-
-        // draw a grayscale heatmap by putting a blurred circle at each data point
-        for (var i = 0, len = this._data.length, p; i < len; i++) {
-            p = this._data[i];
-            ctx.globalAlpha = Math.max(p[2] / this._max, minOpacity === undefined ? 0.05 : minOpacity);
-            ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
-        }
 
         // colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
-        var colored = ctx.getImageData(0, 0, this._width, this._height);
-        this._colorize(colored.data, this._grad);
-        ctx.putImageData(colored, 0, 0);
+        if (this._isReady()) {
+            if (!this._circle) this.radius(this.defaultRadius);
+            if (!this._grad) this.gradient(this.defaultGradient);
+
+            var ctx = this._ctx;
+
+            ctx.clearRect(0, 0, this._width, this._height);
+
+            // draw a grayscale heatmap by putting a blurred circle at each data point
+            for (var i = 0, len = this._data.length, p; i < len; i++) {
+                p = this._data[i];
+                ctx.globalAlpha = Math.max(p[2] / this._max, minOpacity === undefined ? 0.05 : minOpacity);
+                ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
+            }
+
+            var colored = ctx.getImageData(0, 0, this._width, this._height);
+            this._colorize(colored.data, this._grad);
+            ctx.putImageData(colored, 0, 0);        	
+        }
 
         return this;
     },
@@ -138,5 +141,10 @@ simpleheat.prototype = {
             // the canvas class needs to have a default constructor without any parameter
             return new this._canvas.constructor();
         }
+    },
+    
+    _isReady:function() {
+    	return this._width > 0 && this._height > 0;
     }
+    
 };
