@@ -96,10 +96,8 @@ simpleheat.prototype = {
     },
 
     draw: function (minOpacity) {
-    	//return if not ready
-        if (!this._isReady()) {
-        	return this;
-        }
+    	//return if width or height invalid
+        if (!this._width || !this._height) return this;
         
         // colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
         if (!this._circle) this.radius(this.defaultRadius);
@@ -143,11 +141,6 @@ simpleheat.prototype = {
             // the canvas class needs to have a default constructor without any parameter
             return new this._canvas.constructor();
         }
-    },
-    
-    _isReady:function() {
-    	//not ready unless we have a valid width or height
-    	return this._width > 0 && this._height > 0;
     }
-    
+        
 };
