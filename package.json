@@ -18,13 +18,14 @@
     "test": "eslint simpleheat.js"
   },
   "devDependencies": {
-    "eslint": "^1.7.3",
-    "eslint-config-mourner": "^1.0.1"
+    "eslint": "^3.13.1",
+    "eslint-config-mourner": "^2.0.1"
   },
   "eslintConfig": {
     "extends": "mourner",
     "rules": {
-      "new-cap": 0
+      "new-cap": 0,
+      "consistent-return": 0
     }
   },
   "license": "BSD-2-Clause"
