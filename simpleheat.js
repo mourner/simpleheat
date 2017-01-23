@@ -17,6 +17,12 @@ function simpleheat(canvas) {
 
 simpleheat.prototype = {
 
+
+    resize: function() {
+	this._width = canvas.width;
+	this._height = canvas.height;
+    },
+
     defaultRadius: 25,
 
     defaultGradient: {
