@@ -106,19 +106,20 @@ simpleheat.prototype = {
         // draw a grayscale heatmap by putting a blurred circle at each data point
         for (var i = 0, len = this._data.length, p; i < len; i++) {
             p = this._data[i];
-            ctx.globalAlpha = Math.min(Math.max(p[2] / this._max, minOpacity === undefined ? 0.05 : minOpacity), 1);
+            ctx.globalAlpha = Math.min(p[2] / this._max, 1);
             ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
         }
 
         // colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
         var colored = ctx.getImageData(0, 0, this._width, this._height);
-        this._colorize(colored.data, this._grad);
+        this._colorize(colored.data, this._grad, minOpacity);
         ctx.putImageData(colored, 0, 0);
 
         return this;
     },
 
-    _colorize: function (pixels, gradient) {
+    _colorize: function (pixels, gradient, minOpacity) {
+        var minAlpha = 255 * (minOpacity || 0);
         for (var i = 0, len = pixels.length, j; i < len; i += 4) {
             j = pixels[i + 3] * 4; // get gradient color from opacity value
 
@@ -126,6 +127,7 @@ simpleheat.prototype = {
                 pixels[i] = gradient[j];
                 pixels[i + 1] = gradient[j + 1];
                 pixels[i + 2] = gradient[j + 2];
+                pixels[i + 3] = Math.max(pixels[i + 3], minAlpha);
             }
         }
     },
