@@ -70,8 +70,23 @@ simpleheat.prototype = {
     },
 
     resize: function () {
+        var canvasWidth = parseInt(this._canvas.width,10);
+        var canvasHeight = parseInt(this._canvas.height,10);
+        var self = this;
+        if (this._data != null) {
+            this._data = this._data.map(function(point) {
+                return [
+                    point[0]*canvasWidth/self._width,
+                    point[1]*canvasHeight/self._height,
+                    point[2]]
+            })
+        }
+
         this._width = this._canvas.width;
         this._height = this._canvas.height;
+        this.draw();
+
+        return this;
     },
 
     gradient: function (grad) {
