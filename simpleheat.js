@@ -44,7 +44,6 @@ simpleheat.prototype = {
 
     clear: function () {
         this._data = [];
-        this.draw();
         return this;
     },
 
