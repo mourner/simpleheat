@@ -44,6 +44,7 @@ simpleheat.prototype = {
 
     clear: function () {
         this._data = [];
+        this.draw();
         return this;
     },
 
@@ -85,6 +86,8 @@ simpleheat.prototype = {
         this._width = this._canvas.width;
         this._height = this._canvas.height;
         this.draw();
+
+        return this;
     },
 
     gradient: function (grad) {
