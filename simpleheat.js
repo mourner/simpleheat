@@ -43,6 +43,7 @@ simpleheat.prototype = {
     },
 
     clear: function () {
+        this._ctx.clearRect(0, 0, this._width, this._height);
         this._data = [];
         return this;
     },
