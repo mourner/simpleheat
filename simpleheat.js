@@ -126,6 +126,7 @@ simpleheat.prototype = {
                 pixels[i] = gradient[j];
                 pixels[i + 1] = gradient[j + 1];
                 pixels[i + 2] = gradient[j + 2];
+                pixels[i + 3] = gradient[j + 3];
             }
         }
     },
