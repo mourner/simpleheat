@@ -3,28 +3,35 @@
 <head>
     <title>simpleheat demo</title>
     <style>
-        body { text-align: center; font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
+        body { text-align: center; font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; min-width:600px;}
         a { color: #0077ff; }
         .container { width: 1000px; height: 600px; margin: 0 auto; position: relative; border: 1px solid #ccc; }
-        .options { position: absolute; top: 0; right: 0; padding: 10px; background: rgba(255,255,255,0.6);
-            border-bottom: 1px solid #ccc; border-left: 1px solid #ccc; line-height: 1; }
+        .options { position: absolute; top: 0; left: 0; padding: 10px; background: rgba(255,255,255,0.6);
+            border-bottom: 1px solid #ccc; border: 1px solid #ccc; line-height: 1; }
         .options input { width: 200px; }
         .options label { width: 60px; float: left; text-align: right; margin-right: 10px; color: #555; }
         .ghbtns { position: relative; top: 4px; margin-left: 5px; }
+        .promo {width:40%;float:right;min-height:70px;}
     </style>
 </head>
 <body>
-<p>
+
+<p class="promo">
     <strong>simpleheat</strong> is a tiny and fast JS heatmap library.
     More on <a href="https://github.com/mourner/simpleheat">mourner / simpleheat</a>
     <iframe class="ghbtns" src="http://ghbtns.com/github-btn.html?user=mourner&amp;repo=simpleheat&amp;type=watch&amp;count=true"
   allowtransparency="true" frameborder="0" scrolling="0" width="90" height="20"></iframe>
 </p>
-<div class="container">
-    <div class="options">
-        <label>Radius </label><input type="range" id="radius" value="25" min="10" max="50" /><br />
-        <label>Blur </label><input type="range" id="blur" value="15" min="10" max="50" />
-    </div>
+<div style="clear:both"></div>
+
+<div class="options">
+    <label>Radius </label><input type="range" id="radius" value="25" min="10" max="50" /><br />
+    <label>Blur </label><input type="range" id="blur" value="15" min="10" max="50" /> <br/>
+    <label>Width </label><input type="range" id="width" value="1000" min="100" max="2000" /><br/>
+    <label>Height </label><input type="range" id="height" value="600" min="100" max="2000" />
+</div>
+
+<div id="container" class="container">    
     <canvas id="canvas" width="1000" height="600"></canvas>
 </div>
 
@@ -48,7 +55,6 @@ function draw() {
     console.timeEnd('draw');
     frame = null;
 }
-
 draw();
 
 get('canvas').onmousemove = function (e) {
@@ -58,12 +64,24 @@ get('canvas').onmousemove = function (e) {
 
 var radius = get('radius'),
     blur = get('blur'),
+    width = get('width'),
+    height = get('height'),
     changeType = 'oninput' in radius ? 'oninput' : 'onchange';
 
 radius[changeType] = blur[changeType] = function (e) {
     heat.radius(+radius.value, +blur.value);
     frame = frame || window.requestAnimationFrame(draw);
 };
+
+width[changeType] = height[changeType] = function (e) {
+    var container = get('container');
+    var canvas = get('canvas');
+    canvas.width = width.value;
+    canvas.height = height.value;
+    container.style.width = width.value + "px";
+    container.style.height = height.value + "px";
+    heat.resize();
+}
 
 </script>
 </body>
