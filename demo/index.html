@@ -23,7 +23,8 @@
 <div class="container">
     <div class="options">
         <label>Radius </label><input type="range" id="radius" value="25" min="10" max="50" /><br />
-        <label>Blur </label><input type="range" id="blur" value="15" min="10" max="50" />
+        <label>Blur </label><input type="range" id="blur" value="15" min="10" max="50" /><br />
+        <label>Opacity </label><input type="range" id="minOpacityPct" value="5" min="0" max="100" />
     </div>
     <canvas id="canvas" width="1000" height="600"></canvas>
 </div>
@@ -40,11 +41,12 @@ function get(id) {
 }
 
 var heat = simpleheat('canvas').data(data).max(18),
+    minOpacity = 0,
     frame;
 
 function draw() {
     console.time('draw');
-    heat.draw();
+    heat.draw(minOpacity);
     console.timeEnd('draw');
     frame = null;
 }
@@ -58,10 +60,12 @@ get('canvas').onmousemove = function (e) {
 
 var radius = get('radius'),
     blur = get('blur'),
+    minOpacityPct = get('minOpacityPct'),
     changeType = 'oninput' in radius ? 'oninput' : 'onchange';
 
-radius[changeType] = blur[changeType] = function (e) {
+radius[changeType] = blur[changeType] = minOpacityPct[changeType] = function (e) {
     heat.radius(+radius.value, +blur.value);
+    minOpacity = +minOpacityPct.value / 100;
     frame = frame || window.requestAnimationFrame(draw);
 };
 
