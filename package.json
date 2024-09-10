@@ -1,6 +1,6 @@
 {
   "name": "simpleheat",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A tiny JavaScript library for drawing heatmaps with Canvas",
   "homepage": "https://github.com/mourner/simpleheat",
   "keywords": [
