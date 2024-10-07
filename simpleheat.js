@@ -83,15 +83,27 @@ simpleheat.prototype = {
         canvas.width = 1;
         canvas.height = 256;
 
-        for (var i in grad) {
-            gradient.addColorStop(+i, grad[i]);
+        if (Object.prototype.toString.call(grad) === '[object Object]') {
+
+            for (var i in grad) {
+                gradient.addColorStop(+i, grad[i]);
+            }
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1, 256);
+
+        } else if (Object.prototype.toString.call(grad) === '[object Uint8Array]') {
+
+            canvas.width = 256;
+            const imgData = ctx.createImageData(1, 256);
+            imgData.data.set(grad);
+            ctx.putImageData(imgData, 0, 0);
+
+        } else {
+            throw new Error('Color Scale is undefined.');
         }
 
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, 1, 256);
-
         this._grad = ctx.getImageData(0, 0, 1, 256).data;
-
         return this;
     },
 
