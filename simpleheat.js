@@ -12,6 +12,7 @@ function simpleheat(canvas) {
     this._height = canvas.height;
 
     this._max = 1;
+    this._fixedOpacity = null;
     this._data = [];
 }
 
@@ -35,6 +36,12 @@ simpleheat.prototype = {
     max: function (max) {
         this._max = max;
         return this;
+    },
+
+    // value between 0 and 255
+    fixedOpacity: function(fixedOpacity) {
+	this._fixedOpacity = fixedOpacity;
+	return this;
     },
 
     add: function (point) {
@@ -126,6 +133,8 @@ simpleheat.prototype = {
                 pixels[i] = gradient[j];
                 pixels[i + 1] = gradient[j + 1];
                 pixels[i + 2] = gradient[j + 2];
+		if (this._fixedOpacity != null)
+		    pixels[i + 3] = this._fixedOpacity;
             }
         }
     },
@@ -140,3 +149,4 @@ simpleheat.prototype = {
         }
     }
 };
+
