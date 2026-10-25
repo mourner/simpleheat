@@ -8,23 +8,35 @@
     "canvas",
     "visualization"
   ],
-  "author": "Vladimir Agafonkin",
+  "author": "Volodymyr Agafonkin",
   "repository": {
     "type": "git",
     "url": "git://github.com/mourner/simpleheat.git"
   },
   "type": "module",
   "main": "simpleheat.js",
-  "exports": "./simpleheat.js",
+  "types": "simpleheat.d.ts",
+  "exports": {
+    ".": {
+      "types": "./simpleheat.d.ts",
+      "default": "./simpleheat.js"
+    }
+  },
   "files": [
-    "simpleheat.js"
+    "simpleheat.js",
+    "simpleheat.d.ts"
   ],
   "scripts": {
-    "test": "eslint simpleheat.js"
+    "lint": "eslint simpleheat.js",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "test": "npm run lint && npm run typecheck",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "eslint": "^10.13.0",
-    "eslint-config-mourner": "^5.0.1"
+    "eslint-config-mourner": "^5.0.1",
+    "typescript": "^7.0.2"
   },
   "license": "BSD-2-Clause"
 }

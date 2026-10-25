@@ -1,3 +1,10 @@
+/**
+ * @typedef {[x: number, y: number, value: number]} HeatPoint
+ * @typedef {Record<number, string>} HeatGradient Color stops in the 0..1 range, e.g. `{0.4: 'blue', 1: 'red'}`.
+ * @typedef {HTMLCanvasElement | OffscreenCanvas} AnyCanvas
+ */
+
+/** @type {HeatGradient} */
 const defaultGradient = {
     0.4: 'blue',
     0.6: 'cyan',
@@ -6,50 +13,80 @@ const defaultGradient = {
     1.0: 'red'
 };
 
-// OffscreenCanvas keeps the helper canvases out of the DOM (and works in workers); fall back to a
-// detached DOM canvas in browsers without it (Safari < 16.4). In Node, define a global
-// OffscreenCanvas (e.g. Canvas from node-canvas) to use the library without a DOM.
-function createCanvas(width, height) {
-    if (typeof OffscreenCanvas !== 'undefined') return new OffscreenCanvas(width, height);
+/**
+ * @param {AnyCanvas} canvas
+ * @param {CanvasRenderingContext2DSettings} [settings]
+ */
+function getContext(canvas, settings) {
+    return /** @type {CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D} */ (canvas.getContext('2d', settings));
+}
+
+/**
+ * Create an offscreen canvas context, falling back to a DOM canvas in older browsers (Safari < 16.4).
+ * In Node, define a global OffscreenCanvas (e.g. Canvas from @napi-rs/canvas).
+ * @param {number} width
+ * @param {number} height
+ * @param {CanvasRenderingContext2DSettings} [settings]
+ */
+function createContext(width, height, settings) {
+    if (typeof OffscreenCanvas !== 'undefined') return getContext(new OffscreenCanvas(width, height), settings);
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
-    return canvas;
+    return getContext(canvas, settings);
 }
 
 export default class SimpleHeat {
+    /** @param {AnyCanvas | string} canvas A canvas or the id of a canvas element. */
     constructor(canvas) {
-        this._canvas = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
-        this._ctx = this._canvas.getContext('2d', {willReadFrequently: true});
+        this._canvas = typeof canvas === 'string' ? /** @type {HTMLCanvasElement} */ (document.getElementById(canvas)) : canvas;
+        this._ctx = getContext(this._canvas, {willReadFrequently: true});
         this._max = 1;
-        this._data = [];
+        this._data = /** @type {HeatPoint[]} */ ([]);
     }
 
+    /**
+     * Set data points, replacing existing ones.
+     * @param {HeatPoint[]} data
+     */
     data(data) {
         this._data = data;
         return this;
     }
 
+    /**
+     * Set the value that maps to the full gradient color (1 by default).
+     * @param {number} max
+     */
     max(max) {
         this._max = max;
         return this;
     }
 
+    /**
+     * Add a data point.
+     * @param {HeatPoint} point
+     */
     add(point) {
         this._data.push(point);
         return this;
     }
 
+    /** Remove all data points. */
     clear() {
         this._data = [];
         return this;
     }
 
+    /**
+     * Set point radius and blur radius.
+     * @param {number} r
+     * @param {number} blur
+     */
     radius(r = 25, blur = 15) {
         // create a grayscale blurred circle image that we'll use for drawing points
-        const r2 = this._r = r + blur;
-        const circle = this._circle = createCanvas(r2 * 2, r2 * 2);
-        const ctx = circle.getContext('2d');
+        const r2 = r + blur;
+        const ctx = createContext(r2 * 2, r2 * 2);
 
         // draw the circle off-canvas so that only its blurred shadow lands inside
         ctx.shadowOffsetX = ctx.shadowOffsetY = r2 * 2;
@@ -60,12 +97,17 @@ export default class SimpleHeat {
         ctx.arc(-r2, -r2, r, 0, Math.PI * 2);
         ctx.fill();
 
+        this._circle = ctx.canvas;
         return this;
     }
 
+    /**
+     * Set gradient colors.
+     * @param {HeatGradient} grad
+     */
     gradient(grad = defaultGradient) {
         // create a 256x1 gradient that we'll use to turn a grayscale heatmap into a colored one
-        const ctx = createCanvas(1, 256).getContext('2d', {willReadFrequently: true});
+        const ctx = createContext(1, 256, {willReadFrequently: true});
         const gradient = ctx.createLinearGradient(0, 0, 0, 256);
 
         for (const [stop, color] of Object.entries(grad)) {
@@ -76,16 +118,22 @@ export default class SimpleHeat {
         ctx.fillRect(0, 0, 1, 256);
 
         this._grad = ctx.getImageData(0, 0, 1, 256).data;
-
         return this;
     }
 
+    /**
+     * Draw the heatmap.
+     * @param {number} minOpacity Minimum point opacity.
+     */
     draw(minOpacity = 0.05) {
         if (!this._circle) this.radius();
         if (!this._grad) this.gradient();
 
-        const {_ctx: ctx, _circle: circle, _r: r, _grad: grad} = this;
+        const ctx = this._ctx;
+        const circle = /** @type {AnyCanvas} */ (this._circle);
+        const grad = /** @type {Uint8ClampedArray} */ (this._grad);
         const {width, height} = this._canvas;
+        const r = circle.width / 2;
 
         ctx.clearRect(0, 0, width, height);
 
@@ -109,7 +157,6 @@ export default class SimpleHeat {
         }
 
         ctx.putImageData(image, 0, 0);
-
         return this;
     }
 }
