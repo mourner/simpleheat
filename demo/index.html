@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
     <title>simpleheat demo</title>
     <style>
         body { text-align: center; font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
@@ -17,7 +18,7 @@
 <p>
     <strong>simpleheat</strong> is a tiny and fast JS heatmap library.
     More on <a href="https://github.com/mourner/simpleheat">mourner / simpleheat</a>
-    <iframe class="ghbtns" src="http://ghbtns.com/github-btn.html?user=mourner&amp;repo=simpleheat&amp;type=watch&amp;count=true"
+    <iframe class="ghbtns" src="https://ghbtns.com/github-btn.html?user=mourner&amp;repo=simpleheat&amp;type=watch&amp;count=true"
   allowtransparency="true" frameborder="0" scrolling="0" width="90" height="20"></iframe>
 </p>
 <div class="container">
@@ -32,38 +33,37 @@
 <script type="module">
 import SimpleHeat from '../simpleheat.js';
 
-window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-                               window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+const canvas = document.getElementById('canvas');
+const radius = document.getElementById('radius');
+const blur = document.getElementById('blur');
 
-function get(id) {
-    return document.getElementById(id);
-}
-
-var heat = new SimpleHeat('canvas').data(data).max(18),
-    frame;
+const heat = new SimpleHeat(canvas).data(data).max(18);
+let frame = 0;
 
 function draw() {
     console.time('draw');
     heat.draw();
     console.timeEnd('draw');
-    frame = null;
+    frame = 0;
+}
+
+function scheduleDraw() {
+    frame ||= requestAnimationFrame(draw);
 }
 
 draw();
 
-get('canvas').onmousemove = function (e) {
-    heat.add([e.layerX, e.layerY, 1]);
-    frame = frame || window.requestAnimationFrame(draw);
-};
+canvas.addEventListener('mousemove', (e) => {
+    heat.add([e.offsetX, e.offsetY, 1]);
+    scheduleDraw();
+});
 
-var radius = get('radius'),
-    blur = get('blur'),
-    changeType = 'oninput' in radius ? 'oninput' : 'onchange';
-
-radius[changeType] = blur[changeType] = function (e) {
-    heat.radius(+radius.value, +blur.value);
-    frame = frame || window.requestAnimationFrame(draw);
-};
+for (const input of [radius, blur]) {
+    input.addEventListener('input', () => {
+        heat.radius(+radius.value, +blur.value);
+        scheduleDraw();
+    });
+}
 
 </script>
 </body>
