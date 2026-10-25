@@ -29,7 +29,6 @@
     <canvas id="canvas" width="1000" height="600"></canvas>
 </div>
 
-<script src="data.js"></script>
 <script type="module">
 import SimpleHeat from '../simpleheat.js';
 
@@ -37,6 +36,7 @@ const canvas = document.getElementById('canvas');
 const radius = document.getElementById('radius');
 const blur = document.getElementById('blur');
 
+const data = await (await fetch('data.json')).json();
 const heat = new SimpleHeat(canvas).data(data).max(18);
 let frame = 0;
 

@@ -98,6 +98,7 @@ export default class SimpleHeat {
         ctx.fill();
 
         this._circle = ctx.canvas;
+        this._r = r2;
         return this;
     }
 
@@ -132,8 +133,8 @@ export default class SimpleHeat {
         const ctx = this._ctx;
         const circle = /** @type {AnyCanvas} */ (this._circle);
         const grad = /** @type {Uint8ClampedArray} */ (this._grad);
+        const r = /** @type {number} */ (this._r);
         const {width, height} = this._canvas;
-        const r = circle.width / 2;
 
         ctx.clearRect(0, 0, width, height);
 

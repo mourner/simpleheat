@@ -14,14 +14,7 @@
     "url": "git://github.com/mourner/simpleheat.git"
   },
   "type": "module",
-  "main": "simpleheat.js",
-  "types": "simpleheat.d.ts",
-  "exports": {
-    ".": {
-      "types": "./simpleheat.d.ts",
-      "default": "./simpleheat.js"
-    }
-  },
+  "exports": "./simpleheat.js",
   "files": [
     "simpleheat.js",
     "simpleheat.d.ts"
