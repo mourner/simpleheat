@@ -1,4 +1,4 @@
-class SimpleHeat {
+export default class SimpleHeat {
     constructor(canvas) {
         this._canvas = canvas = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
 
@@ -131,8 +131,4 @@ class SimpleHeat {
         const Canvas = this._canvas.constructor;
         return new Canvas();
     }
-}
-
-export default function simpleheat(canvas) {
-    return new SimpleHeat(canvas);
 }
