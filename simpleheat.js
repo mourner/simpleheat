@@ -118,7 +118,9 @@ export default class SimpleHeat {
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 1, 256);
 
-        this._grad = ctx.getImageData(0, 0, 1, 256).data;
+        // pack each color with alpha equal to its index, so colorizing is a single lookup per pixel
+        const rgba = new Uint32Array(ctx.getImageData(0, 0, 1, 256).data.buffer);
+        this._grad = rgba.map((c, a) => a && (c & 0xffffff | a << 24));
         return this;
     }
 
@@ -132,7 +134,7 @@ export default class SimpleHeat {
 
         const ctx = this._ctx;
         const circle = /** @type {AnyCanvas} */ (this._circle);
-        const grad = /** @type {Uint8ClampedArray} */ (this._grad);
+        const grad = /** @type {Uint32Array} */ (this._grad);
         const r = /** @type {number} */ (this._r);
         const {width, height} = this._canvas;
 
@@ -141,20 +143,15 @@ export default class SimpleHeat {
         // draw a grayscale heatmap by putting a blurred circle at each data point
         for (const [x, y, value] of this._data) {
             ctx.globalAlpha = Math.min(Math.max(value / this._max, minOpacity), 1);
-            ctx.drawImage(circle, x - r, y - r);
+            ctx.drawImage(circle, Math.round(x - r), Math.round(y - r));
         }
 
         // colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
         const image = ctx.getImageData(0, 0, width, height);
-        const pixels = image.data;
+        const pixels = new Uint32Array(image.data.buffer); // little-endian, so alpha is the top byte
 
-        for (let i = 0; i < pixels.length; i += 4) {
-            const j = pixels[i + 3] * 4;
-            if (j) {
-                pixels[i] = grad[j];
-                pixels[i + 1] = grad[j + 1];
-                pixels[i + 2] = grad[j + 2];
-            }
+        for (let i = 0; i < pixels.length; i++) {
+            pixels[i] = grad[pixels[i] >>> 24];
         }
 
         ctx.putImageData(image, 0, 0);
