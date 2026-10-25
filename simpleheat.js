@@ -137,6 +137,7 @@ export default class SimpleHeat {
         const grad = /** @type {Uint32Array} */ (this._grad);
         const r = /** @type {number} */ (this._r);
         const {width, height} = this._canvas;
+        if (!width || !height) return this; // e.g. a hidden map container; getImageData would throw
 
         ctx.clearRect(0, 0, width, height);
 
