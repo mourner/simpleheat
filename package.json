@@ -13,20 +13,18 @@
     "type": "git",
     "url": "git://github.com/mourner/simpleheat.git"
   },
+  "type": "module",
   "main": "simpleheat.js",
+  "exports": "./simpleheat.js",
+  "files": [
+    "simpleheat.js"
+  ],
   "scripts": {
     "test": "eslint simpleheat.js"
   },
   "devDependencies": {
-    "eslint": "^3.13.1",
-    "eslint-config-mourner": "^2.0.1"
-  },
-  "eslintConfig": {
-    "extends": "mourner",
-    "rules": {
-      "new-cap": 0,
-      "consistent-return": 0
-    }
+    "eslint": "^10.13.0",
+    "eslint-config-mourner": "^5.0.1"
   },
   "license": "BSD-2-Clause"
 }

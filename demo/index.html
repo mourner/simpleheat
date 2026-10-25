@@ -28,9 +28,9 @@
     <canvas id="canvas" width="1000" height="600"></canvas>
 </div>
 
-<script src="../simpleheat.js"></script>
 <script src="data.js"></script>
-<script>
+<script type="module">
+import simpleheat from '../simpleheat.js';
 
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
                                window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;

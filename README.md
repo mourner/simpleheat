@@ -9,6 +9,8 @@ Powers [Leaflet.heat](https://github.com/Leaflet/Leaflet.heat), a heatmap plugin
 Demo: http://mourner.github.io/simpleheat/demo
 
 ```js
+import simpleheat from 'simpleheat';
+
 simpleheat('canvas').data(data).draw();
 ```
 
@@ -18,7 +20,7 @@ simpleheat('canvas').data(data).draw();
 
 ```js
 // create a simpleheat object given an id or canvas reference
-var heat = simpleheat(canvas);
+const heat = simpleheat(canvas);
 ```
 
 #### Data
