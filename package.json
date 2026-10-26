@@ -11,7 +11,7 @@
   "author": "Volodymyr Agafonkin",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mourner/simpleheat.git"
+    "url": "git+https://github.com/mourner/simpleheat.git"
   },
   "type": "module",
   "exports": "./simpleheat.js",

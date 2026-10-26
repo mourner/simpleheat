@@ -10,7 +10,8 @@ import SimpleHeat from 'simpleheat';
 
 new SimpleHeat('canvas').data(data).draw();
 ```
-[![Simply Awesome](https://img.shields.io/badge/simply-awesome-brightgreen.svg)](https://github.com/mourner/projects)
+
+[![Build Status](https://github.com/mourner/simpleheat/actions/workflows/ci.yml/badge.svg)](https://github.com/mourner/simpleheat/actions) [![Simply Awesome](https://img.shields.io/badge/simply-awesome-brightgreen.svg)](https://github.com/mourner/projects)
 
 ## [Demo](https://mourner.github.io/simpleheat/demo)
 

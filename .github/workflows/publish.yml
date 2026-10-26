@@ -18,5 +18,4 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org
       - run: npm ci
-      - run: npm test
       - run: npm stage publish
